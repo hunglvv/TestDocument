@@ -1,4 +1,3 @@
-
 package com.hunglv.office.officereader;
 
 import java.io.File;
@@ -54,23 +53,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.Toast;
-
-/**
- * 文件注释
- * <p>
- * <p>
- * Read版本:        Read V1.0
- * <p>
- * 作者:            梁金晶
- * <p>
- * 日期:            2011-10-27
- * <p>
- * 负责人:          梁金晶
- * <p>
- * 负责小组:         
- * <p>
- * <p>
- */
 
 public class AppActivity extends Activity implements IMainFrame
 {
@@ -153,14 +135,11 @@ public class AppActivity extends Activity implements IMainFrame
         setContentView(appFrame);
     }
     
-    private void saveBitmapToFile(Bitmap bitmap)
-    {
-        if (bitmap == null)
-        {
+    private void saveBitmapToFile(Bitmap bitmap) {
+        if (bitmap == null) {
             return;
         }
-        if (tempFilePath == null)
-        {
+        if (tempFilePath == null) {
             String state = Environment.getExternalStorageState();
             if (Environment.MEDIA_MOUNTED.equals(state))
             {
@@ -353,7 +332,7 @@ public class AppActivity extends Activity implements IMainFrame
         dbService = new DBService(getApplicationContext());
 
         filePath = intent.getStringExtra(MainConstant.INTENT_FILED_FILE_PATH);
-        // 文件关联打开文件
+        // File association open file
         if (filePath == null)
         {
             this.filePath = intent.getDataString();
@@ -365,7 +344,7 @@ public class AppActivity extends Activity implements IMainFrame
             filePath = Uri.decode(filePath);
         }
 
-        // 显示打开文件名称
+        // Show open file name
         int index = filePath.lastIndexOf(File.separator);
         if (index > 0)
         {
@@ -377,7 +356,7 @@ public class AppActivity extends Activity implements IMainFrame
         }
 
         boolean isSupport = FileKit.instance().isSupport(filePath);
-        //写入本地数据库
+        //Write to local database
         if (isSupport)
         {
             dbService.insertRecentFiles(MainConstant.TABLE_RECENT, filePath);
@@ -792,15 +771,11 @@ public class AppActivity extends Activity implements IMainFrame
                 case EventConstant.APP_DRAW_ID:
                 	showCalloutToolsBar(true);
                 	control.getSysKit().getCalloutManager().setDrawingMode(MainConstant.DRAWMODE_CALLOUTDRAW);
-                	appFrame.post(new Runnable() {
-						
-						@Override
-						public void run() {
-							// TODO Auto-generated method stub
-							control.actionEvent(EventConstant.APP_INIT_CALLOUTVIEW_ID, null);
-							
-						}
-					});
+                	appFrame.post(() -> {
+                        // TODO Auto-generated method stub
+                        control.actionEvent(EventConstant.APP_INIT_CALLOUTVIEW_ID, null);
+
+                    });
                 	
                 	break;
                 	
@@ -814,15 +789,11 @@ public class AppActivity extends Activity implements IMainFrame
                 	{
                 		control.getSysKit().getCalloutManager().setDrawingMode(MainConstant.DRAWMODE_CALLOUTDRAW);
                 		setEraserUnChecked();
-                    	appFrame.post(new Runnable() {
-    						
-    						@Override
-    						public void run() {
-    							// TODO Auto-generated method stub
-    							control.actionEvent(EventConstant.APP_INIT_CALLOUTVIEW_ID, null);
-    							
-    						}
-    					});
+                    	appFrame.post(() -> {
+                            // TODO Auto-generated method stub
+                            control.actionEvent(EventConstant.APP_INIT_CALLOUTVIEW_ID, null);
+
+                        });
                 	}
                 	else
                 	{
@@ -887,7 +858,7 @@ public class AppActivity extends Activity implements IMainFrame
      */
     public void openFileFinish()
     {
-        // 加一条与应用视图分隔的灰色线
+        // Add a gray line separated from the application view
         gapView = new View(getApplicationContext());
         gapView.setBackgroundColor(Color.GRAY);
         appFrame.addView(gapView, new LayoutParams(LayoutParams.MATCH_PARENT, 1));
@@ -895,12 +866,6 @@ public class AppActivity extends Activity implements IMainFrame
         View app = control.getView();
         appFrame.addView(app,
             new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-        // 
-        /*if (applicationType == MainConstant.APPLICATION_TYPE_SS)
-        {
-            bottomBar = new SheetBar(getApplicationContext(), control, getResources().getDisplayMetrics().widthPixels);
-            appFrame.addView(bottomBar, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-        }*/
     }
 
     /**

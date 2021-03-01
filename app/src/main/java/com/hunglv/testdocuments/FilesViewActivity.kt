@@ -8,6 +8,7 @@ import android.graphics.Bitmap.createBitmap
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.MotionEvent
@@ -18,10 +19,12 @@ import androidx.appcompat.app.AppCompatActivity
 import com.hunglv.office.common.IOfficeToPicture
 import com.hunglv.office.common.IOfficeToPicture.VIEW_CHANGE_END
 import com.hunglv.office.constant.EventConstant
-import com.hunglv.office.constant.MainConstant
+import com.hunglv.office.constant.EventConstant.*
+import com.hunglv.office.constant.MainConstant.*
 import com.hunglv.office.constant.wp.WPViewConstant
 import com.hunglv.office.java.awt.Color
 import com.hunglv.office.macro.DialogListener
+import com.hunglv.office.officereader.beans.AToolsbar
 import com.hunglv.office.res.ResKit
 import com.hunglv.office.ss.sheetbar.SheetBar
 import com.hunglv.office.system.IControl
@@ -42,7 +45,7 @@ class FilesViewActivity : AppCompatActivity(), IMainFrame {
     //
     private var appFrame: LinearLayout? = null
     private var applicationType: Byte = -1
-    private var bg = Color.BLACK
+    private var bg = Color.GRAY
     private var bottomBar: SheetBar? = null
     private var control: MainControl? = null
     private var fileName: String? = null
@@ -53,10 +56,9 @@ class FilesViewActivity : AppCompatActivity(), IMainFrame {
     private var isThumb = false
     private var tempFilePath: String? = null
     private var toast: Toast? = null
+    private var writeLog = true
 
     //
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityFilesViewBinding.inflate(layoutInflater)
@@ -71,64 +73,67 @@ class FilesViewActivity : AppCompatActivity(), IMainFrame {
         this.control = MainControl(this)
         this.appFrame = binding.appFrame
 
+
         if (intent != null) {
             this.filePath = intent.getStringExtra("path")
             this.fileName = intent.getStringExtra("name")
             this.isFromAppActivity = intent.getBooleanExtra("fromAppActivity", false)
-            binding.layoutToolbar.toolBarTitle.text = this.fileName
+            this.appFrame?.setBackgroundColor(
+                (intent.getStringExtra("fileType")?.toInt() ?: R.color.gray)
+            )
+            Log.d("Hunglv", "FilesViewActivity - onCreate: $filePath")
+            binding.layoutToolbar.toolBarTitle.text = fileName
         }
+
         this.toast = Toast.makeText(this, "", Toast.LENGTH_SHORT)
         createView()
-        this.control?.apply {
-            openFile(this@FilesViewActivity.filePath)
-            setOffictToPicture(object : IOfficeToPicture {
-                private var bitmap: Bitmap? = null
-                override fun setModeType(modeType: Byte) {
+        this.control?.openFile(this.filePath)
 
+        this.control?.setOffictToPicture(object : IOfficeToPicture {
+            private var bitmap: Bitmap? = null
+            override fun setModeType(modeType: Byte) {
+
+            }
+
+            override fun getModeType(): Byte {
+                return VIEW_CHANGE_END
+            }
+
+            override fun getBitmap(
+                visibleWidth: Int,
+                visibleHeight: Int
+            ): Bitmap? {
+                if (visibleWidth == 0 || visibleHeight == 0) {
+                    return null
                 }
-
-                override fun getModeType(): Byte {
-                    return VIEW_CHANGE_END
+                if (bitmap == null
+                    || bitmap!!.width != visibleWidth
+                    || bitmap!!.height != visibleHeight
+                ) {
+                    // custom picture size
+                    bitmap?.recycle()
+                    //
+                    bitmap = createBitmap(
+                        (visibleWidth),
+                        (visibleHeight),
+                        Bitmap.Config.ARGB_8888
+                    )
                 }
+                return bitmap
+            }
 
-                override fun getBitmap(
-                    visibleWidth: Int,
-                    visibleHeight: Int
-                ): Bitmap? {
-                    if (visibleWidth == 0 || visibleHeight == 0) {
-                        return null
-                    }
-                    if (bitmap == null
-                        || bitmap!!.width != visibleWidth
-                        || bitmap!!.height != visibleHeight
-                    ) {
-                        // custom picture size
-                        bitmap?.recycle()
-                        // 
-                        bitmap = createBitmap(
-                            (visibleWidth),
-                            (visibleHeight),
-                            Bitmap.Config.ARGB_8888
-                        )
-                    }
-                    return bitmap
-                }
+            override fun callBack(bitmap: Bitmap?) {
+                saveBitmapToFile(bitmap)
+            }
 
-                override fun callBack(bitmap: Bitmap?) {
-                    this@FilesViewActivity.saveBitmapToFile(bitmap)
-                }
+            override fun isZoom(): Boolean {
+                return false
+            }
 
-                override fun isZoom(): Boolean {
-                    return false
-                }
+            override fun dispose() {
 
-                override fun dispose() {
-
-                }
-            })
-        }
-
-
+            }
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -137,10 +142,10 @@ class FilesViewActivity : AppCompatActivity(), IMainFrame {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
+        when (item.itemId) {
             android.R.id.home -> onBackPressed()
             R.id.ic_full_screen_view -> {
-            //                hideSystemUI()
+                //                hideSystemUI()
             }
             R.id.ic_share -> {
                 val intent = Intent(Intent.ACTION_SEND)
@@ -192,12 +197,12 @@ class FilesViewActivity : AppCompatActivity(), IMainFrame {
     }
 
     override fun onBackPressed() {
-        val actionValue = this.control?.getActionValue(EventConstant.PG_SLIDESHOW, null)
-        if (actionValue == null || !(actionValue as Boolean)){
-                this.control?.reader?.abortReader()
+        val actionValue = this.control?.getActionValue(PG_SLIDESHOW, null)
+        if (actionValue == null || (actionValue is Boolean && !actionValue)) {
+            this.control?.reader?.abortReader()
             val mainControl = this.control
-            if (mainControl == null || !mainControl?.isAutoTest){
-                if (this.isFromAppActivity){
+            if (mainControl == null || !mainControl.isAutoTest) {
+                if (this.isFromAppActivity) {
                     startActivity(Intent(this, MainActivity::class.java))
                 }
                 super.onBackPressed()
@@ -217,40 +222,40 @@ class FilesViewActivity : AppCompatActivity(), IMainFrame {
         return null
     }
 
-    private fun createView(){
+    private fun createView() {
         val file = this.filePath?.toLowerCase(Locale.getDefault()) ?: return
 
-        if (file.endsWith(MainConstant.FILE_TYPE_DOC) || file.endsWith(MainConstant.FILE_TYPE_DOCX)
-            || file.endsWith(MainConstant.FILE_TYPE_TXT)
-            || file.endsWith(MainConstant.FILE_TYPE_DOT)
-            || file.endsWith(MainConstant.FILE_TYPE_DOTX)
-            || file.endsWith(MainConstant.FILE_TYPE_DOTM)
+        if (file.endsWith(FILE_TYPE_DOC) || file.endsWith(FILE_TYPE_DOCX)
+            || file.endsWith(FILE_TYPE_TXT)
+            || file.endsWith(FILE_TYPE_DOT)
+            || file.endsWith(FILE_TYPE_DOTX)
+            || file.endsWith(FILE_TYPE_DOTM)
         ) {
-            this.applicationType = MainConstant.APPLICATION_TYPE_WP
-        } else if (file.endsWith(MainConstant.FILE_TYPE_XLS)
-            || file.endsWith(MainConstant.FILE_TYPE_XLSX)
-            || file.endsWith(MainConstant.FILE_TYPE_XLT)
-            || file.endsWith(MainConstant.FILE_TYPE_XLTX)
-            || file.endsWith(MainConstant.FILE_TYPE_XLTM)
-            || file.endsWith(MainConstant.FILE_TYPE_XLSM)
+            this.applicationType = APPLICATION_TYPE_WP
+        } else if (file.endsWith(FILE_TYPE_XLS)
+            || file.endsWith(FILE_TYPE_XLSX)
+            || file.endsWith(FILE_TYPE_XLT)
+            || file.endsWith(FILE_TYPE_XLTX)
+            || file.endsWith(FILE_TYPE_XLTM)
+            || file.endsWith(FILE_TYPE_XLSM)
         ) {
-            applicationType = MainConstant.APPLICATION_TYPE_SS
-        } else if (file.endsWith(MainConstant.FILE_TYPE_PPT)
-            || file.endsWith(MainConstant.FILE_TYPE_PPTX)
-            || file.endsWith(MainConstant.FILE_TYPE_POT)
-            || file.endsWith(MainConstant.FILE_TYPE_PPTM)
-            || file.endsWith(MainConstant.FILE_TYPE_POTX)
-            || file.endsWith(MainConstant.FILE_TYPE_POTM)
+            applicationType = APPLICATION_TYPE_SS
+        } else if (file.endsWith(FILE_TYPE_PPT)
+            || file.endsWith(FILE_TYPE_PPTX)
+            || file.endsWith(FILE_TYPE_POT)
+            || file.endsWith(FILE_TYPE_PPTM)
+            || file.endsWith(FILE_TYPE_POTX)
+            || file.endsWith(FILE_TYPE_POTM)
         ) {
-            applicationType = MainConstant.APPLICATION_TYPE_PPT
-        } else if (file.endsWith(MainConstant.FILE_TYPE_PDF)) {
-            applicationType = MainConstant.APPLICATION_TYPE_PDF
+            applicationType = APPLICATION_TYPE_PPT
+        } else if (file.endsWith(FILE_TYPE_PDF)) {
+            applicationType = APPLICATION_TYPE_PDF
         } else {
-            applicationType = MainConstant.APPLICATION_TYPE_WP
+            applicationType = APPLICATION_TYPE_WP
         }
     }
 
-    private fun fileShare(){
+    private fun fileShare() {
         if (this.filePath == null) return
         val arrayList = ArrayList<Uri>()
         arrayList.add(Uri.fromFile(File(this.filePath!!)))
@@ -377,7 +382,8 @@ class FilesViewActivity : AppCompatActivity(), IMainFrame {
     }
 
     override fun showProgressBar(visible: Boolean) {
-        setProgressBarIndeterminate(visible)
+//        setProgressBarIndeterminate(visible)
+        binding.progressBar.visibility = if (visible) View.VISIBLE else View.GONE
     }
 
     override fun updateToolsbarStatus() {
@@ -386,10 +392,10 @@ class FilesViewActivity : AppCompatActivity(), IMainFrame {
         }
         val count = appFrame!!.childCount
         for (i in 0 until count) {
-            val v = appFrame!!.getChildAt(i)
-//            if (v is AToolsbar) {
-//                v.updateStatus()
-//            }
+            val view = appFrame!!.getChildAt(i)
+            if (view is AToolsbar) {
+                view.updateStatus()
+            }
         }
     }
 
@@ -406,94 +412,73 @@ class FilesViewActivity : AppCompatActivity(), IMainFrame {
     }
 
     override fun doActionEvent(actionID: Int, obj: Any?): Boolean {
-        try {
-            when (actionID) {
-                EventConstant.SYS_ONBACK_ID -> onBackPressed()
-                EventConstant.SYS_RESET_TITLE_ID -> title = obj as String?
-                EventConstant.SYS_UPDATE_TOOLSBAR_BUTTON_STATUS -> updateToolsbarStatus()
-                EventConstant.APP_SHARE_ID -> fileShare()
-                EventConstant.APP_FINDING -> {
+        if (actionID == SYS_ONBACK_ID) {
+            onBackPressed()
+        } else if (actionID != SYS_HELP_ID) {
+            if (actionID == SYS_UPDATE_TOOLSBAR_BUTTON_STATUS) {
+                updateToolsbarStatus()
+            } else if (actionID == SYS_RESET_TITLE_ID) {
+                title = obj as String
+            } else if (actionID != FILE_MARK_STAR_ID) {
+                if (actionID == APP_SHARE_ID) {
+                    fileShare()
+                } else if (actionID == APP_FINDING) {
                     val trim = (obj as String).trim()
-                    if (trim.isEmpty() || !control!!.find.find(trim)) {
+                    if (trim.isEmpty() || (this.control != null && !this.control!!.find.find(trim))) {
                         setFindBackForwardState(false)
-                        toast!!.setText(getLocalString("DIALOG_FIND_NOT_FOUND"))
-                        toast!!.show()
+                        this.toast?.setText(getLocalString("DIALOG_FIND_NOT_FOUND"))
+                        this.toast?.show()
                     } else {
                         setFindBackForwardState(true)
                     }
-                }
-                EventConstant.SS_CHANGE_SHEET -> bottomBar!!.setFocusSheetButton((obj as Int? ?: 0))
-                EventConstant.APP_DRAW_ID -> {
-                    control?.getSysKit()?.calloutManager?.drawingMode =
-                        MainConstant.DRAWMODE_CALLOUTDRAW
-                    appFrame?.post {
-                        control?.actionEvent(EventConstant.APP_INIT_CALLOUTVIEW_ID, null)
+                } else if (actionID != SS_CHANGE_SHEET) {
+                    when (actionID) {
+                        APP_DRAW_ID -> {
+                            this.control?.getSysKit()?.calloutManager?.drawingMode =
+                                DRAWMODE_CALLOUTDRAW
+                            appFrame?.post {
+                                control?.actionEvent(APP_INIT_CALLOUTVIEW_ID, null)
+                            }
+                        }
+                        APP_BACK_ID -> {
+                            control?.getSysKit()?.calloutManager?.drawingMode = DRAWMODE_NORMAL
+                        }
+                        APP_PEN_ID -> {
+                            if (obj is Boolean && !obj) {
+                                control?.getSysKit()?.calloutManager?.drawingMode = DRAWMODE_NORMAL
+                            }
+                            control?.getSysKit()?.calloutManager?.drawingMode =
+                                DRAWMODE_CALLOUTDRAW
+                            appFrame?.post {
+                                control?.actionEvent(APP_INIT_CALLOUTVIEW_ID, null)
+                            }
+                        }
+                        APP_ERASER_ID -> {
+                            try {
+                                if (obj is Boolean && !obj) {
+                                    control?.getSysKit()?.calloutManager?.drawingMode =
+                                        DRAWMODE_NORMAL
+                                } else {
+                                    control?.getSysKit()?.calloutManager?.drawingMode =
+                                        DRAWMODE_CALLOUTERASE
+                                }
+                            } catch (e: Exception) {
+                                control?.getSysKit()?.errorKit?.writerLog(e)
+                            }
+                        }
+                        else -> return false
                     }
-                }
-                EventConstant.APP_BACK_ID -> {
-                    control?.getSysKit()?.calloutManager?.drawingMode = MainConstant.DRAWMODE_NORMAL
-                }
-                EventConstant.APP_PEN_ID -> if (obj as Boolean) {
-                    control?.getSysKit()?.calloutManager?.drawingMode =
-                        MainConstant.DRAWMODE_CALLOUTDRAW
-                    appFrame?.post {
-                        control?.actionEvent(EventConstant.APP_INIT_CALLOUTVIEW_ID, null)
-                    }
                 } else {
-                    control?.getSysKit()?.calloutManager?.drawingMode = MainConstant.DRAWMODE_NORMAL
+                    bottomBar?.setFocusSheetButton((obj as Int).toInt())
                 }
-                EventConstant.APP_ERASER_ID -> if (obj as Boolean) {
-                    control?.getSysKit()?.calloutManager?.drawingMode =
-                        MainConstant.DRAWMODE_CALLOUTERASE
-                } else {
-                    control?.getSysKit()?.calloutManager?.drawingMode = MainConstant.DRAWMODE_NORMAL
-                }
-                /*EventConstant.SYS_HELP_ID -> {
-                    val intent = Intent(
-                        Intent.ACTION_VIEW, Uri.parse(
-                            resources
-                                .getString(R.string.sys_url_wxiwei)
-                        )
-                    )
-                    startActivity(intent)
-                }
-                EventConstant.APP_FIND_ID -> showSearchBar(true)
-                EventConstant.FILE_MARK_STAR_ID -> markFile()
-                EventConstant.APP_FIND_BACKWARD -> if (!control!!.find.findBackward()) {
-                    searchBar.setEnabled(EventConstant.APP_FIND_BACKWARD, false)
-                    toast!!.setText(getLocalString("DIALOG_FIND_TO_BEGIN"))
-                    toast!!.show()
-                } else {
-                    searchBar.setEnabled(EventConstant.APP_FIND_FORWARD, true)
-                }
-                EventConstant.APP_FIND_FORWARD -> if (!control!!.find.findForward()) {
-                    searchBar.setEnabled(EventConstant.APP_FIND_FORWARD, false)
-                    toast!!.setText(getLocalString("DIALOG_FIND_TO_END"))
-                    toast!!.show()
-                } else {
-                    searchBar.setEnabled(EventConstant.APP_FIND_BACKWARD, true)
-                }
-                EventConstant.APP_COLOR_ID -> {
-                    val dlg = ColorPickerDialog(this, control)
-                    dlg.show()
-                    dlg.setOnDismissListener(DialogInterface.OnDismissListener {
-                        setButtonEnabled(
-                            true
-                        )
-                    })
-                    setButtonEnabled(false)
-                }*/
-                else -> return false
             }
-        } catch (e: Exception) {
-            control!!.getSysKit().errorKit.writerLog(e)
         }
         return true
     }
 
     override fun openFileFinish() {
         gapView = View(applicationContext)
-        gapView!!.setBackgroundColor(android.graphics.Color.GRAY)
+        gapView!!.setBackgroundResource(R.color.black)
         appFrame?.addView(
             gapView,
             LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 1)
@@ -507,15 +492,12 @@ class FilesViewActivity : AppCompatActivity(), IMainFrame {
                     LinearLayout.LayoutParams.MATCH_PARENT
                 )
             )
+//            appFrame?.invalidate()
         }
     }
 
     override fun getBottomBarHeight(): Int {
-        val sheetBar = this.bottomBar
-        if (sheetBar != null){
-            return sheetBar.sheetbarHeight
-        }
-        return 0
+        return bottomBar?.sheetbarHeight ?: 0
     }
 
     override fun getAppName(): String {
@@ -531,11 +513,12 @@ class FilesViewActivity : AppCompatActivity(), IMainFrame {
     }
 
     override fun setWriteLog(saveLog: Boolean) {
-        this.isWriteLog = saveLog
+//        this.writeLog = saveLog
     }
 
     override fun isWriteLog(): Boolean {
-        return this.isWriteLog
+//        return this.writeLog
+        return false
     }
 
     override fun setThumbnail(isThumbnail: Boolean) {
@@ -560,9 +543,9 @@ class FilesViewActivity : AppCompatActivity(), IMainFrame {
         this.control = null
 
         this.bottomBar = null
-        if (this.appFrame != null){
+        if (this.appFrame != null) {
             val childCount = this.appFrame!!.childCount
-            for (i in 0 until childCount){
+            for (i in 0 until childCount) {
                 this.appFrame!!.getChildAt(i)
             }
             this.appFrame = null

@@ -18,6 +18,7 @@ import com.hunglv.office.fc.xls.XLSXReader;
 
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 
 /**
@@ -41,7 +42,7 @@ public class FileReaderThread extends Thread
    
     /**
      * 
-     * @param activity
+     * @param control
      * @param handler
      * @param filePath
      * @param encoding
@@ -139,22 +140,11 @@ public class FileReaderThread extends Thread
             msg.what = MainConstant.HANDLER_MESSAGE_SUCCESS;            
             //handler.handleMessage(msg);
         }
-        catch (OutOfMemoryError eee)
+        catch (OutOfMemoryError | Exception | AbortReaderError eee)
         {
             msg.what = MainConstant.HANDLER_MESSAGE_ERROR;
             msg.obj = eee;
-        }
-        catch (Exception ee)
-        {
-            msg.what = MainConstant.HANDLER_MESSAGE_ERROR;
-            msg.obj = ee;
-        }
-        catch (AbortReaderError ee)
-        {
-            msg.what = MainConstant.HANDLER_MESSAGE_ERROR;
-            msg.obj = ee;
-        }
-        finally
+        } finally
         {   
             handler.handleMessage(msg);
             control = null;

@@ -31,6 +31,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -76,7 +77,7 @@ public class MainControl extends AbstractControl
         // listener
         initListener();
         //
-        toast = Toast.makeText(getActivity().getApplicationContext(), "", 0);
+        toast = Toast.makeText(getActivity().getApplicationContext(), "", Toast.LENGTH_SHORT);
         
         // 自动测试
         Intent intent = getActivity().getIntent();
@@ -93,29 +94,24 @@ public class MainControl extends AbstractControl
         /**
          * 
          */
-        onKeyListener = new DialogInterface.OnKeyListener()
-        {
-
-            public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event)
+        onKeyListener = (dialog, keyCode, event) -> {
+            if (keyCode == KeyEvent.KEYCODE_BACK)
             {
-                if (keyCode == KeyEvent.KEYCODE_BACK)
+                dialog.dismiss();
+                isCancel = true;
+                if (reader != null)
                 {
-                    dialog.dismiss();
-                    isCancel = true;
-                    if (reader != null)
-                    {
-                        reader.abortReader();
-                        reader.dispose();
-                    }
-                    //getMainFrame().destroyEngine();
-                    getActivity().onBackPressed();
-                    return true;
+                    reader.abortReader();
+                    reader.dispose();
                 }
-                return false;
+                //getMainFrame().destroyEngine();
+                getActivity().onBackPressed();
+                return true;
             }
+            return false;
         };
 
-        handler = new Handler()
+        handler = new Handler(Looper.getMainLooper())
         {
             public void handleMessage(Message msg)
             {
@@ -127,43 +123,35 @@ public class MainControl extends AbstractControl
                 switch (msg.what)
                 {
                     case MainConstant.HANDLER_MESSAGE_SUCCESS:
-                        post(new Runnable()
-                        {
-                            public void run()
-                            {                                
-                                try                
+                        post(() -> {
+                            try
+                            {
+                                if(getMainFrame().isShowProgressBar())
                                 {
-                                    if(getMainFrame().isShowProgressBar())
+                                    dismissProgressDialog();
+                                }
+                                else
+                                {
+                                    if(customDialog != null)
                                     {
-                                        dismissProgressDialog();
-                                    } 
-                                    else
-                                    {
-                                        if(customDialog != null)
-                                        {
-                                            customDialog.dismissDialog(ICustomDialog.DIALOGTYPE_LOADING);
-                                        }
+                                        customDialog.dismissDialog(ICustomDialog.DIALOGTYPE_LOADING);
                                     }
-                                    createApplication(message.obj);
                                 }
-                                catch (Exception e)
-                                {
-                                    sysKit.getErrorKit().writerLog(e, true);
-                                }
+                                createApplication(message.obj);
                             }
-                        });    
+                            catch (Exception e)
+                            {
+                                sysKit.getErrorKit().writerLog(e, true);
+                            }
+                        });
                         break;
                         
                     case MainConstant.HANDLER_MESSAGE_ERROR:
-                        post(new Runnable()
-                        {
-                            public void run()
+                        post(() -> {
+                            dismissProgressDialog();
+                            if (message.obj instanceof Throwable)
                             {
-                                dismissProgressDialog();
-                                if (message.obj instanceof Throwable)
-                                {
-                                    sysKit.getErrorKit().writerLog((Throwable)message.obj, true);
-                                }
+                                sysKit.getErrorKit().writerLog((Throwable)message.obj, true);
                             }
                         });
                         break;
@@ -171,15 +159,11 @@ public class MainControl extends AbstractControl
                     case MainConstant.HANDLER_MESSAGE_SHOW_PROGRESS:
                         if(getMainFrame().isShowProgressBar())
                         {
-                            post(new Runnable()                        
-                            {
-                                public void run()
-                                {
-                                    progressDialog = ProgressDialog.show(getActivity(), 
-                                        frame.getAppName(), frame.getLocalString("DIALOG_LOADING"), 
-                                        false, false, null); 
-                                    progressDialog.setOnKeyListener(onKeyListener);
-                                }
+                            post(() -> {
+                                progressDialog = ProgressDialog.show(getActivity(),
+                                    frame.getAppName(), frame.getLocalString("DIALOG_LOADING"),
+                                    false, false, null);
+                                progressDialog.setOnKeyListener(onKeyListener);
                             });
                         }
                         else
@@ -193,13 +177,7 @@ public class MainControl extends AbstractControl
                         break;
                         
                     case MainConstant.HANDLER_MESSAGE_DISMISS_PROGRESS:
-                        post(new Runnable()
-                        {
-                            public void run()
-                            {
-                                dismissProgressDialog();
-                            }
-                        }); 
+                        post(() -> dismissProgressDialog());
                         break;
                         
                     case MainConstant.HANDLER_MESSAGE_SEND_READER_INSTANCE:
@@ -269,7 +247,7 @@ public class MainControl extends AbstractControl
             	}
             	else if(bg instanceof Drawable)
             	{
-            		view.setBackgroundDrawable((Drawable)bg);
+            		view.setBackground((Drawable)bg);
             	}
         	}
         }
@@ -279,15 +257,6 @@ public class MainControl extends AbstractControl
         {
             if (!hassPassword)
             {
-                /*handler.post(new Runnable()
-                {
-                    
-                    @ Override
-                    public void run()
-                    {
-                        frame.openFileFinish();
-                    }
-                });*/
                 frame.openFileFinish();
             }
         }
@@ -308,30 +277,27 @@ public class MainControl extends AbstractControl
             {
             	 //now lets check for HardwareAcceleration since it is only avaliable since ICS.
 		         // 14 = ICS_VERSION_CODE
-		         if (android.os.Build.VERSION.SDK_INT >= 11)
-		         {
-		             try
-		             {
-		            	 View contentView = getView();
-		                 //use reflection to get that Method
-		                 Method isHardwareAccelerated = contentView.getClass().getMethod("isHardwareAccelerated", (Class<?>[]) null);
-		                 Object o = isHardwareAccelerated.invoke(contentView, (Object[]) null);
-		                 if (null != o && o instanceof Boolean && (Boolean)o)
-		                 {
-		                     //ok we're shure that HardwareAcceleration is on.
-		                     //Now Try to switch it off:
-		                     Method setLayerType = contentView.getClass().getMethod("setLayerType", int.class, android.graphics.Paint.class);
-		                     int LAYER_TYPE_SOFTWARE = contentView.getClass().getField("LAYER_TYPE_SOFTWARE").getInt(null);
-		                     setLayerType.invoke(contentView, LAYER_TYPE_SOFTWARE, null);
-		                     
-		                 }
-		             }
-		             catch(Exception e)
-		             {
-		                 e.printStackTrace();
-		             }
-		         }
-            	
+                try
+                {
+                    View contentView = getView();
+                    //use reflection to get that Method
+                    Method isHardwareAccelerated = contentView.getClass().getMethod("isHardwareAccelerated", (Class<?>[]) null);
+                    Object o = isHardwareAccelerated.invoke(contentView, (Object[]) null);
+                    if (null != o && o instanceof Boolean && (Boolean)o)
+                    {
+                        //ok we're shure that HardwareAcceleration is on.
+                        //Now Try to switch it off:
+                        Method setLayerType = contentView.getClass().getMethod("setLayerType", int.class, android.graphics.Paint.class);
+                        int LAYER_TYPE_SOFTWARE = contentView.getClass().getField("LAYER_TYPE_SOFTWARE").getInt(null);
+                        setLayerType.invoke(contentView, LAYER_TYPE_SOFTWARE, null);
+
+                    }
+                }
+                catch(Exception e)
+                {
+                    e.printStackTrace();
+                }
+
                 actionEvent(EventConstant.SYS_SET_PROGRESS_BAR_ID, false);
                 // 初始化数
                 actionEvent(EventConstant.SYS_INIT_ID, null);
@@ -541,17 +507,11 @@ public class MainControl extends AbstractControl
             case EventConstant.SYS_START_BACK_READER_ID:
                 if (handler != null)
                 {
-                    handler.post(new Runnable()
-                    {
-                        
-                        @ Override
-                        public void run()
+                    handler.post(() -> {
+                        if (!isDispose)
                         {
-                            if (!isDispose)
-                            {
 //                                frame.getActivity().setProgressBarIndeterminateVisibility(true);
-                                frame.showProgressBar(true);
-                            }
+                            frame.showProgressBar(true);
                         }
                     });
                 }
@@ -560,16 +520,11 @@ public class MainControl extends AbstractControl
             case EventConstant.SYS_READER_FINSH_ID:
                 if (handler != null)
                 {
-                    handler.post(new Runnable()
-                    {                        
-                        @ Override
-                        public void run()
+                    handler.post(() -> {
+                        if (!isDispose)
                         {
-                            if (!isDispose)
-                            {
 //                                frame.getActivity().setProgressBarIndeterminateVisibility(false);
-                                frame.showProgressBar(false);
-                            }
+                            frame.showProgressBar(false);
                         }
                     });
                 }

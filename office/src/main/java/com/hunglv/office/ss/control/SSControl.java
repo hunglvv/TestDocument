@@ -25,6 +25,7 @@ import com.hunglv.office.system.SysKit;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -177,9 +178,10 @@ public class SSControl extends AbstractControl
                 updateStatus();
                 break;
                 
-            case EventConstant.FILE_COPY_ID:                        //copy
-                ClipboardManager clip = (ClipboardManager)getMainFrame().getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-                clip.setText(spreadSheet.getActiveCellContent());
+            case EventConstant.FILE_COPY_ID:
+                android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getMainFrame().getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("Text copied!", spreadSheet.getActiveCellContent());
+                clipboard.setPrimaryClip(clip);
                 break;
                 
             case EventConstant.APP_HYPERLINK:                       //hyperlink
@@ -205,7 +207,7 @@ public class SSControl extends AbstractControl
                             rowIndex -= 1;
                             columnIndex -= 1;                            
                             
-                            spreadSheet.getSheetView().goToCell(rowIndex >= 0 ? rowIndex : 0, columnIndex >= 0 ? columnIndex : 0);
+                            spreadSheet.getSheetView().goToCell(Math.max(rowIndex, 0), Math.max(columnIndex, 0));
                             
                             getMainFrame().doActionEvent(EventConstant.SYS_UPDATE_TOOLSBAR_BUTTON_STATUS, null);
                             

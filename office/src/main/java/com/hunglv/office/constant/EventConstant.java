@@ -253,5 +253,4 @@ public final class EventConstant
     
     // 重绘
     public static final int TEST_REPAINT_ID = 0xF0000000;
-    
 }

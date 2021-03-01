@@ -24,7 +24,7 @@
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true" />
 
-        <com.hunglv.office.pdfview.PDFView
+        <com.hunglv.office.pdf.PDFView
             android:id="@+id/pdfView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
