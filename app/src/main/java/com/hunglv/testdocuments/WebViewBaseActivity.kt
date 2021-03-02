@@ -25,7 +25,7 @@ abstract class WebViewBaseActivity : AppCompatActivity() {
             webChromeClient = WebChromeClient()
 
             val webSetting = settings
-            webSetting.javaScriptEnabled = true
+//            webSetting.javaScriptEnabled = true
 //            webSetting.cacheMode = 2
             webSetting.domStorageEnabled = true
 //            webSetting.setRenderPriority(WebwebSetting.RenderPriority.HIGH)
@@ -34,11 +34,11 @@ abstract class WebViewBaseActivity : AppCompatActivity() {
             webSetting.domStorageEnabled = true
             webSetting.allowFileAccess = true
             webSetting.allowContentAccess = true
-            webSetting.setAppCacheEnabled(true)
+//            webSetting.setAppCacheEnabled(true)
             webSetting.databaseEnabled = true
 //            webSetting.pluginState = WebwebSetting.PluginState.ON
-            webSetting.allowFileAccessFromFileURLs = true
-            webSetting.allowUniversalAccessFromFileURLs = true
+//            webSetting.allowFileAccessFromFileURLs = true
+//            webSetting.allowUniversalAccessFromFileURLs = true
             webSetting.mediaPlaybackRequiresUserGesture = false
         }
     }

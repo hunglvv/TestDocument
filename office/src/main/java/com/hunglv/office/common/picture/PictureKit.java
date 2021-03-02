@@ -14,8 +14,6 @@ import com.hunglv.office.common.pictureefftect.PictureCroppedInfo;
 import com.hunglv.office.common.pictureefftect.PictureEffectInfo;
 import com.hunglv.office.common.pictureefftect.PictureEffectUtil;
 import com.hunglv.office.constant.EventConstant;
-import com.hunglv.office.fc.hslf.blip.JPEG;
-import com.hunglv.office.fc.pdf.PDFLib;
 import com.hunglv.office.pg.animate.IAnimation;
 import com.hunglv.office.pg.animate.ShapeAnimation;
 import com.hunglv.office.system.IControl;
@@ -224,9 +222,9 @@ public class PictureKit
    /**
     * 
     * @param canvas         画布
-    * @param data           byte数组的图片数据
-    * @param offset         数组的开始位置
-    * @param len            长度
+    * @param control           byte数组的图片数据
+    * @param viewIndex         数组的开始位置
+    * @param path            长度
     * @param x              x值 
     * @param y              y值 
     * @param zoom           是否缩放
@@ -242,7 +240,7 @@ public class PictureKit
            Bitmap sBitmap = control.getSysKit().getPictureManage().getBitmap(path);
            if (sBitmap == null)
            {
-               if (!isDrawPictrue())
+               if (!isDrawPicture())
                {
                    return null;
                }
@@ -530,25 +528,25 @@ public class PictureKit
     }
  
     /**
-     * @return Returns the isDrawPictrue.
+     * @return Returns the isDrawPicture.
      */
-    public boolean isDrawPictrue()
+    public boolean isDrawPicture()
     {
-        return isDrawPictrue;
+        return isDrawPicture;
     }
 
     /**
-     * @param isDrawPictrue The isDrawPictrue to set.
+     * @param isDrawPicture The isDrawPicture to set.
      */
-    public void setDrawPictrue(boolean isDrawPictrue)
+    public void setDrawPictrue(boolean isDrawPicture)
     {
-        this.isDrawPictrue = isDrawPictrue;
+        this.isDrawPicture = isDrawPicture;
     }
 
     //
     private Paint paint = new Paint();
     //
-    private boolean isDrawPictrue = true;
+    private boolean isDrawPicture = true;
     //
     //private String filePath;    
 }

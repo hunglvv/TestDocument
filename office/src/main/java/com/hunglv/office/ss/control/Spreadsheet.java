@@ -399,7 +399,7 @@ public class Spreadsheet extends LinearLayout implements IFind, IReaderListener,
      */
     private void toPicture(IOfficeToPicture otp)
     {
-        boolean b = PictureKit.instance().isDrawPictrue();
+        boolean b = PictureKit.instance().isDrawPicture();
         PictureKit.instance().setDrawPictrue(true);
         //
         Bitmap bitmap = otp.getBitmap(getWidth(), getHeight());
@@ -582,7 +582,7 @@ public class Spreadsheet extends LinearLayout implements IFind, IReaderListener,
     }
     /**
      * 
-     * @param findValue
+     * @param Value
      * @return  true: finded   false: not finded
      */
     public boolean find(String value)

@@ -33,35 +33,35 @@ import android.view.ViewGroup;
 public interface IPageListViewListener
 {
     // onTouch
-    public final static byte ON_TOUCH = 0;
+    byte ON_TOUCH = 0;
     // onDown
-    public final static byte ON_DOWN = 1;
+    byte ON_DOWN = 1;
     // onShowPress
-    public final static byte ON_SHOW_PRESS = 2;
+    byte ON_SHOW_PRESS = 2;
     // onSingleTapUp
-    public final static byte ON_SINGLE_TAP_UP = 3;
+    byte ON_SINGLE_TAP_UP = 3;
     // onScroll
-    public final static byte ON_SCROLL = 4;
+    byte ON_SCROLL = 4;
     // onLongPress
-    public final static byte ON_LONG_PRESS = 5;
+    byte ON_LONG_PRESS = 5;
     // onFling
-    public final static byte ON_FLING = 6;
+    byte ON_FLING = 6;
     // onSingleTapConfirmed
-    public final static byte ON_SINGLE_TAP_CONFIRMED = 7;
+    byte ON_SINGLE_TAP_CONFIRMED = 7;
     // onDoubleTap
-    public final static byte ON_DOUBLE_TAP = 8;
+    byte ON_DOUBLE_TAP = 8;
     // onDoubleTapEvent
-    public final static byte ON_DOUBLE_TAP_EVENT = 9;
+    byte ON_DOUBLE_TAP_EVENT = 9;
     // onClick
-    public final static byte ON_CLICK = 10;
+    byte ON_CLICK = 10;
     
     //print mode moving position
-    public final static byte Moving_Horizontal = 0;
-    public final static byte Moving_Vertical = 1;
+    byte Moving_Horizontal = 0;
+    byte Moving_Vertical = 1;
     /**
      * 
      */
-    public Object getModel();
+    Object getModel();
     
     /**
      * 
@@ -70,26 +70,26 @@ public interface IPageListViewListener
      * @param parent
      * @return
      */
-    public APageListItem getPageListItem(int position, View convertView, ViewGroup parent);
+    APageListItem getPageListItem(int position, View convertView, ViewGroup parent);
     
     /**
      * 
      * @param view
      * @param srcBitmap
      */
-   public void exportImage(final APageListItem view, final Bitmap srcBitmap);
+    void exportImage(final APageListItem view, final Bitmap srcBitmap);
    
    /**
     * 
     */
-   public int getPageCount();
+   int getPageCount();
    
    /**
     * 
     * @param pageIndex
     * @return
     */
-   public Rect getPageSize(int pageIndex);
+   Rect getPageSize(int pageIndex);
    
    /**
     * event method, office engine dispatch 
@@ -99,7 +99,7 @@ public interface IPageListViewListener
     * @param       e2            MotionEvent instance
     * @param       velocityX     x axis velocity
     * @param       velocityY     y axis velocity  
-    * @param       eventNethodType  event method      
+    *      eventNethodType  event method
     *              @see TouchEventListener#EVENT_CLICK
     *              @see TouchEventListener#EVENT_DOUBLE_TAP
     *              @see TouchEventListener#EVENT_DOUBLE_TAP_EVENT
@@ -112,20 +112,19 @@ public interface IPageListViewListener
     *              @see TouchEventListener#EVENT_SINGLE_TAP_UP
     *              @see TouchEventListener#EVENT_TOUCH
     */
-   public boolean onEventMethod(View v, MotionEvent e1, MotionEvent e2, float velocityX, float velocityY, byte eventMethodType);
+   boolean onEventMethod(View v, MotionEvent e1, MotionEvent e2, float velocityX, float velocityY, byte eventMethodType);
    
    /**
     * action派发
     *
-    * @param actionID 动作ID  
     * @param obj 动作ID的Value
     */
-   public void updateStutus(Object obj);
+   void updateStatus(Object obj);
    
    /**
     * 
     */
-   public void resetSearchResult(APageListItem pageItem);
+   void resetSearchResult(APageListItem pageItem);
    
    /**
     * is support zoom in / zoom out
@@ -134,39 +133,39 @@ public interface IPageListViewListener
     *           false don’t touch zoom
     */
 
-   public boolean isTouchZoom();
+   boolean isTouchZoom();
    
    /**
     * true: show message when zooming
     * false: not show message when zooming
     * @return
     */
-   public boolean isShowZoomingMsg();
+   boolean isShowZoomingMsg();
    
    /**
     * callback this method after zoom change
     */
-   public void changeZoom();
+   void changeZoom();
    
    /**
     *  set change page flag, Only when effectively the PageSize greater than ViewSize.
     *  (for PPT, word print mode, PDF)
     *  
-    *  @param b    = true, change page
+    *   b    = true, change page
     *              = false, don't change page
     */
-   public boolean isChangePage();
+   boolean isChangePage();
    
 
    /**
-    * @param isDrawPictrue The isDrawPictrue to set.
+    * @param isDrawPicture The isDrawPicture to set.
     */
-   public void setDrawPictrue(boolean isDrawPictrue);
+   void setDrawPicture(boolean isDrawPicture);
    
    /**
     * 
     */
-   public boolean isInit();
+   boolean isInit();
    
    /**
     * 
@@ -174,11 +173,11 @@ public interface IPageListViewListener
     * true fitzoom may be larger than 100% but smaller than the max zoom
     * false fitzoom can not larger than 100%
     */
-   public boolean isIgnoreOriginalSize();
+   boolean isIgnoreOriginalSize();
    
    /**
     * page list view moving position
-    * @param position horizontal or vertical
+    *  horizontal or vertical
     */
-   public byte getPageListViewMovingPosition();
+   byte getPageListViewMovingPosition();
 }

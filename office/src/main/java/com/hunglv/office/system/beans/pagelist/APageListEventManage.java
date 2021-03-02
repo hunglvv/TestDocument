@@ -55,7 +55,7 @@ public class APageListEventManage implements
     
     /**
      * 
-     * @param pdfListView
+     * @param listView
      */
     public APageListEventManage(APageListView listView)
     {
@@ -68,7 +68,7 @@ public class APageListEventManage implements
 
     /**
      * 
-     * @see com.hunglv.office.system.beans.AEventManage#zoom(android.view.MotionEvent)
+//     * @see com.hunglv.office.system.beans.AEventManage#zoom(android.view.MotionEvent)
      *
      */
     protected boolean zoom(MotionEvent event)
@@ -117,7 +117,7 @@ public class APageListEventManage implements
                 {
                     // If still there is no inertial scroll in operation
                     // then the layout is stable
-                    listView.getPageListViewListener().setDrawPictrue(true);
+                    listView.getPageListViewListener().setDrawPicture(true);
                     listView.postRepaint(pageView);
                 }
             }
@@ -251,7 +251,7 @@ public class APageListEventManage implements
         listView.getPageListViewListener().onEventMethod(listView, e1, e2, distanceX, distanceY, IPageListViewListener.ON_SCROLL);
         if (isProcessOnScroll && !isDoubleTap)
         {
-            listView.getPageListViewListener().setDrawPictrue(false);
+            listView.getPageListViewListener().setDrawPicture(false);
             isOnScroll = true;
             mXScroll -= distanceX;
             mYScroll -= distanceY;
@@ -432,7 +432,7 @@ public class APageListEventManage implements
     {
         if (!mScroller.isFinished())
         {
-            listView.getPageListViewListener().setDrawPictrue(false);
+            listView.getPageListViewListener().setDrawPicture(false);
             mScroller.computeScrollOffset();
             int x = mScroller.getCurrX();
             int y = mScroller.getCurrY();
@@ -448,14 +448,14 @@ public class APageListEventManage implements
             // End of an inertial scroll and the user is not interacting.
             // The layout is stable
             listView.postRepaint(listView.getCurrentPageView());
-            listView.getPageListViewListener().updateStutus(null);
-            listView.getPageListViewListener().setDrawPictrue(true);
+            listView.getPageListViewListener().updateStatus(null);
+            listView.getPageListViewListener().setDrawPicture(true);
         }
     }
     
     /**
      * 
-     * @param v
+     * @param pageItem
      */
     protected void slideViewOntoScreen(APageListItem pageItem)
     {

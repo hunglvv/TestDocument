@@ -168,12 +168,12 @@ public class Presentation extends FrameLayout implements IFind, IExportListener
      * 
      *
      */
-    public void setBackgroundDrawable(Drawable d) 
+    public void setBackground(Drawable d)
     {
-       super.setBackgroundDrawable(d);
+       super.setBackground(d);
        if (pgPrintMode != null)
        {
-    	   pgPrintMode.setBackgroundDrawable(d);
+    	   pgPrintMode.setBackground(d);
        }
     }
     
@@ -344,7 +344,7 @@ public class Presentation extends FrameLayout implements IFind, IExportListener
         }
         else if (slideView.animationStoped())
     	{
-	        boolean b = PictureKit.instance().isDrawPictrue();
+	        boolean b = PictureKit.instance().isDrawPicture();
 	        PictureKit.instance().setDrawPictrue(true);
 	        //
 	        float paintZoom = (slideshow ? fitZoom : zoom);
@@ -1130,7 +1130,7 @@ public class Presentation extends FrameLayout implements IFind, IExportListener
                 	}
                 	else if(bg instanceof Drawable)
                 	{
-                		setBackgroundDrawable((Drawable)bg);
+                		setBackground((Drawable)bg);
                 	}
             	}
                 

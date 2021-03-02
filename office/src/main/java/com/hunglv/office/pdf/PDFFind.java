@@ -139,29 +139,25 @@ public class PDFFind implements IFind
         progressDialog.setCancelable(false);
         progressDialog.setTitle(pdfView.getControl().getMainFrame().getLocalString("DIALOG_PDF_SEARCHING"));
         progressDialog.setMax(searchCount);
-        progressDialog.setOnKeyListener(new OnKeyListener()
-        {   
-            @ Override
-            public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event)
+        progressDialog.setOnKeyListener((dialog, keyCode, event) -> {
+            if (keyCode == KeyEvent.KEYCODE_BACK)
             {
-                if (keyCode == KeyEvent.KEYCODE_BACK)
+                isCancel = true;
+                if (safeSearchTask != null)
                 {
-                    isCancel = true;
-                    if (safeSearchTask != null)
-                    {
-                        safeSearchTask.cancel(true);
-                        safeSearchTask = null;
-                    }
+                    safeSearchTask.cancel(true);
+                    safeSearchTask = null;
                 }
-                return true;
             }
+            return true;
         });
-        
-        safeSearchTask = new SafeAsyncTask<Void, Integer, RectF[]>()
+
+        //leak
+        /*safeSearchTask = new SafeAsyncTask<Void, Integer, RectF[]>()
         {
-            /**
+            *//**
              *
-             */
+             *//*
             protected RectF[] doInBackground(Void...params)
             {
                 try
@@ -243,10 +239,10 @@ public class PDFFind implements IFind
                 
             }
 
-            /**
+            *//**
              *
              *
-             */
+             *//*
             protected void onPostExecute(RectF[] result)
             {
                 if(showFindDlg)
@@ -307,7 +303,7 @@ public class PDFFind implements IFind
                 }
             }
         };  
-        safeSearchTask.safeExecute(null);
+        safeSearchTask.safeExecute(null);*/
     }
     
     

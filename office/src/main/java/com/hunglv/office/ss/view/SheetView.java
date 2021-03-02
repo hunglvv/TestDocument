@@ -183,7 +183,7 @@ public class SheetView
                 return null;
             }
             
-            boolean b = PictureKit.instance().isDrawPictrue();
+            boolean b = PictureKit.instance().isDrawPicture();
             PictureKit.instance().setDrawPictrue(true);
             
             Canvas picCanvas = new Canvas(bitmap);        
@@ -882,7 +882,6 @@ public class SheetView
     
     /**
      *  set current zoom rate
-     * @param zoomRate
      */
     public void setZoom(float zoom)
     {

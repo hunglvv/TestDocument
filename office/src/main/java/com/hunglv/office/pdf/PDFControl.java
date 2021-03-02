@@ -47,8 +47,8 @@ public class PDFControl extends AbstractControl
     
     /**
      * 
-     * @param appControl
-     * @param doc
+     * @param mainControl
+     * @param pdfLib
      * @param filePath
      */
     public PDFControl(IControl mainControl, PDFLib pdfLib, String filePath)
@@ -126,7 +126,7 @@ public class PDFControl extends AbstractControl
                     {
                         if (!isDispose)
                         {
-                            getMainFrame().updateToolsbarStatus();
+                            getMainFrame().updateToolbarStatus();
                         }
                     }
                 });                

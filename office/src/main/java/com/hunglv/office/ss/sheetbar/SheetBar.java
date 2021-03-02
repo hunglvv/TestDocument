@@ -1,237 +1,188 @@
-/*
- * 文件名称:          SheetList.java
- *  
- * 编译器:            android2.2
- * 时间:              下午4:13:50
- */
 package com.hunglv.office.ss.sheetbar;
 
-import java.util.Vector;
+import android.content.Context;
+import android.content.res.Configuration;
+import android.graphics.Color;
+import android.graphics.Insets;
+import android.os.Build;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
+import android.view.Gravity;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.WindowInsets;
+import android.view.WindowMetrics;
+import android.widget.HorizontalScrollView;
+import android.widget.LinearLayout;
 
 import com.hunglv.office.constant.EventConstant;
 import com.hunglv.office.system.IControl;
 
-import android.content.Context;
-import android.content.res.Configuration;
-import android.graphics.drawable.Drawable;
-import android.view.Gravity;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.HorizontalScrollView;
-import android.widget.LinearLayout;
+import java.util.Vector;
 
-/**
- * 
- * <p>
- * <p>
- * Read版本:        Read V1.0
- * <p>
- * 作者:            ljj8494
- * <p>
- * 日期:            2011-11-15
- * <p>
- * 负责人:          ljj8494
- * <p>
- * 负责小组:         
- * <p>
- * <p>
- */
-public class SheetBar extends HorizontalScrollView implements OnClickListener
-{
+public class SheetBar extends HorizontalScrollView implements OnClickListener {
     /**
-     * 
      * @param context
      */
-    public SheetBar(Context context)
-    {
+    public SheetBar(Context context) {
         super(context);
-    }    
-    
+    }
+
     /**
-     * 
      * @param context
-     * @param spreadSheet
+     * @param control
      */
-    public SheetBar(Context context, IControl control, int minimumWidth)
-    {
+    public SheetBar(Context context, IControl control, int minimumWidth) {
         super(context);
         this.control = control;
         this.setVerticalFadingEdgeEnabled(false);
         this.setFadingEdgeLength(0);
-        if (minimumWidth == getResources().getDisplayMetrics().widthPixels)
-        {
+        if (minimumWidth == getResources().getDisplayMetrics().widthPixels) {
             this.minimumWidth = -1;
-        }
-        else
-        {
+        } else {
             this.minimumWidth = minimumWidth;
         }
         init();
     }
-    
+
     /**
-     * 
      *
      */
-    public void onConfigurationChanged(Configuration newConfig)
-    {
+    public void onConfigurationChanged(Configuration newConfig) {
         sheetbarFrame.setMinimumWidth(minimumWidth == -1 ? getResources().getDisplayMetrics().widthPixels
-            : minimumWidth);
+                : minimumWidth);
     }
-    
+
     /**
-     * 
+     *
      */
-    private void init()
-    {
+    private void init() {
         Context context = this.getContext();
         sheetbarFrame = new LinearLayout(context);
         sheetbarFrame.setGravity(Gravity.BOTTOM);
-        
-        
-        sheetbarResManager = new SheetbarResManager(context);
-     
-        Drawable drawable = sheetbarResManager.getDrawable(SheetbarResConstant.RESID_SHEETBAR_BG);
-        sheetbarFrame.setBackgroundDrawable(drawable);
+
+        sheetbarFrame.setBackgroundColor(Color.parseColor("#E2E6E9"));
         sheetbarFrame.setOrientation(LinearLayout.HORIZONTAL);
         sheetbarFrame.setMinimumWidth(minimumWidth == -1 ? getResources().getDisplayMetrics().widthPixels
-            : minimumWidth);
-        sheetbarHeight = drawable.getIntrinsicHeight();
-        
-        drawable = sheetbarResManager.getDrawable(SheetbarResConstant.RESID_SHEETBAR_SHADOW_LEFT);
-        LayoutParams parmas = new LayoutParams(LayoutParams.WRAP_CONTENT, drawable.getIntrinsicHeight());
-        // 左边shadow
-        View left = new View(context);
-        left.setBackgroundDrawable(drawable);
-        sheetbarFrame.addView(left, parmas);
-        
+                : minimumWidth);
+        float dp = 48;
+        sheetbarHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics());
+
+        LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, sheetbarHeight);
+        // left shadow
+        this.sheetbarFrame.addView(new View(context), params);
         // sheetButton
-        @ SuppressWarnings("unchecked")
-        Vector<String> vec = (Vector<String>)control.getActionValue(EventConstant.SS_GET_ALL_SHEET_NAME, null);
-        drawable = sheetbarResManager.getDrawable(SheetbarResConstant.RESID_SHEETBUTTON_NORMAL_LEFT);
-        LayoutParams parmasButton = new LayoutParams(LayoutParams.WRAP_CONTENT, drawable.getIntrinsicHeight());
+        @SuppressWarnings("unchecked")
+        Vector<String> vec = (Vector<String>) control.getActionValue(EventConstant.SS_GET_ALL_SHEET_NAME, null);
+        LayoutParams paramsButton = new LayoutParams(LayoutParams.WRAP_CONTENT, sheetbarHeight);
         int count = vec.size();
-        for (int i = 0; i < count; i++)
-        {
-            SheetButton sb = new SheetButton(context, vec.get(i), i, sheetbarResManager);
-            if (currentSheet == null)
-            {
+        for (int i = 0; i < count; i++) {
+            SheetButton sb = new SheetButton(context, vec.get(i), i);
+            if (currentSheet == null) {
                 currentSheet = sb;
                 currentSheet.changeFocus(true);
             }
             sb.setOnClickListener(this);
-            sheetbarFrame.addView(sb, parmasButton);
-            
-            if (i < count - 1)
-            {
+            sheetbarFrame.addView(sb, paramsButton);
+
+            if (i < count - 1) {
                 View view = new View(context);
-                drawable = sheetbarResManager.getDrawable(SheetbarResConstant.RESID_SHEETBAR_SEPARATOR_H);
-                view.setBackgroundDrawable(drawable);
-                sheetbarFrame.addView(view, parmasButton);
+                sheetbarFrame.addView(view, paramsButton);
             }
         }
-        
+
         // 右边shadow
         View right = new View(context);
-        drawable = sheetbarResManager.getDrawable(SheetbarResConstant.RESID_SHEETBAR_SHADOW_RIGHT);
-        right.setBackgroundDrawable(drawable);        
-        sheetbarFrame.addView(right, parmas);
-        
+        sheetbarFrame.addView(right, params);
+
         //
         addView(sheetbarFrame, new LayoutParams(LayoutParams.WRAP_CONTENT, sheetbarHeight));
     }
-    
+
     /**
-     * 
      *
      */
-    public void onClick(View v)
-    {
+    public void onClick(View v) {
         currentSheet.changeFocus(false);
-        
-        SheetButton sb = (SheetButton)v;
+
+        SheetButton sb = (SheetButton) v;
         sb.changeFocus(true);
         currentSheet = sb;
-        
+
         control.actionEvent(EventConstant.SS_SHOW_SHEET, currentSheet.getSheetIndex());
     }
 
     /**
      * set focus sheet button(called when clicked document hyperlink)
+     *
      * @param index
      */
-    public void setFocusSheetButton(int index)
-    {
-        if(currentSheet.getSheetIndex() == index)
-        {
+    public void setFocusSheetButton(int index) {
+        if (currentSheet.getSheetIndex() == index) {
             return;
         }
-        
+
         int count = sheetbarFrame.getChildCount();
         View view = null;
-        for(int i = 0; i < count; i++)
-        {
+        for (int i = 0; i < count; i++) {
             view = sheetbarFrame.getChildAt(i);
-            if (view instanceof SheetButton && ((SheetButton)view).getSheetIndex() == index)
-            {
+            if (view instanceof SheetButton && ((SheetButton) view).getSheetIndex() == index) {
                 currentSheet.changeFocus(false);
-                
-                currentSheet = (SheetButton)view;
+
+                currentSheet = (SheetButton) view;
                 currentSheet.changeFocus(true);
                 break;
             }
         }
-        
-        //sheetbar scrolled
-        int screenWidth = control.getActivity().getWindowManager().getDefaultDisplay().getWidth();
+
+        //sheet bar scrolled
+        int screenWidth;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            WindowMetrics windowMetrics = control.getActivity().getWindowManager().getCurrentWindowMetrics();
+            Insets insets = windowMetrics.getWindowInsets()
+                    .getInsetsIgnoringVisibility(WindowInsets.Type.systemBars());
+            screenWidth = windowMetrics.getBounds().width() - insets.left - insets.right;
+        } else {
+            DisplayMetrics displayMetrics = new DisplayMetrics();
+            control.getActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+            screenWidth = displayMetrics.widthPixels;
+        }
         int barWidth = sheetbarFrame.getWidth();
-        if(barWidth > screenWidth)
-        {
+        if (barWidth > screenWidth && view != null) {
             int left = view.getLeft();
             int right = view.getRight();
             int off = (screenWidth - (right - left)) / 2;
-            
+
             off = left - off;
-            if(off < 0)
-            {
+            if (off < 0) {
                 off = 0;
-            }
-            else if(off + screenWidth > barWidth)
-            {
+            } else if (off + screenWidth > barWidth) {
                 off = barWidth - screenWidth;
             }
-           
+
             scrollTo(off, 0);
         }
     }
-    
+
     /**
      * @return Returns the sheetbarHeight.
      */
-    public int getSheetbarHeight()
-    {
+    public int getSheetbarHeight() {
         return sheetbarHeight;
     }
-    
+
     /**
-     * 
+     *
      */
-    public void dispose()
-    {
-        sheetbarResManager.dispose();
-        sheetbarResManager = null;
-        
+    public void dispose() {
         currentSheet = null;
-        if(sheetbarFrame != null)
-        {
+        if (sheetbarFrame != null) {
             int count = sheetbarFrame.getChildCount();
             View v;
-            for(int i = 0; i < count; i++)
-            {
+            for (int i = 0; i < count; i++) {
                 v = sheetbarFrame.getChildAt(i);
-                if(v instanceof SheetButton)
-                {
-                    ((SheetButton)v).dispose();
+                if (v instanceof SheetButton) {
+                    ((SheetButton) v).dispose();
                 }
             }
             sheetbarFrame = null;
@@ -241,7 +192,7 @@ public class SheetBar extends HorizontalScrollView implements OnClickListener
     //
     private int minimumWidth;
     //
-    private SheetbarResManager sheetbarResManager;
+//    private SheetbarResManager sheetbarResManager;
     //
     private int sheetbarHeight;
     //

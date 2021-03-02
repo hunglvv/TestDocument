@@ -115,12 +115,12 @@ public class PDFView extends FrameLayout implements IPageListViewListener
      * 
      *
      */
-    public void setBackgroundDrawable(Drawable d) 
+    public void setBackground(Drawable d)
     {
-       super.setBackgroundDrawable(d);
+       super.setBackground(d);
        if (listView != null)
        {
-           listView.setBackgroundDrawable(d);
+           listView.setBackground(d);
        }
     }
     
@@ -645,7 +645,7 @@ public class PDFView extends FrameLayout implements IPageListViewListener
      * @param       e2            MotionEvent instance
      * @param       velocityX     x axis velocity
      * @param       velocityY     y axis velocity  
-     * @param       method
+     *       method
      *              @see IMainFrame#ON_CLICK
      *              @see IMainFrame#ON_DOUBLE_TAP
      *              @see IMainFrame#ON_DOUBLE_TAP_EVENT
@@ -667,7 +667,7 @@ public class PDFView extends FrameLayout implements IPageListViewListener
      * 
      *
      */
-    public void updateStutus(Object obj)
+    public void updateStatus(Object obj)
     {
        control.actionEvent(EventConstant.SYS_UPDATE_TOOLSBAR_BUTTON_STATUS, obj);
     }
@@ -715,7 +715,7 @@ public class PDFView extends FrameLayout implements IPageListViewListener
      * 
      *
      */
-    public void setDrawPictrue(boolean isDrawPictrue)
+    public void setDrawPicture(boolean isDrawPicture)
     {        
 
     }

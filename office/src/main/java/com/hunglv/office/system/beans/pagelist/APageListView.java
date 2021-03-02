@@ -65,17 +65,12 @@ public class APageListView extends AdapterView<Adapter>
         eventManage = new APageListEventManage(this);
         pageAdapter = new APageListAdapter(this);
         setLongClickable(true); 
-        this.post(new Runnable()
-        {
-            @ Override
-            public void run()
+        this.post(() -> {
+            // get thumbnail, pageListViewListener = null;
+            if (pageListViewListener != null
+                && pageListViewListener.isInit())
             {
-                // get thumbnail, pageListViewListener = null;
-                if (pageListViewListener != null
-                    && pageListViewListener.isInit())
-                {
-                    init();
-                }
+                init();
             }
         });
     }
@@ -555,7 +550,7 @@ public class APageListView extends AdapterView<Adapter>
                 }
             }
         }, 1);
-        pageListViewListener.updateStutus(null);
+        pageListViewListener.updateStatus(null);
     }
     
     /**
@@ -586,7 +581,7 @@ public class APageListView extends AdapterView<Adapter>
                     requestLayout();
                 }
             }, 1);
-            pageListViewListener.updateStutus(null);
+            pageListViewListener.updateStatus(null);
         }
     }
 
@@ -992,7 +987,7 @@ public class APageListView extends AdapterView<Adapter>
     
     /**
      * 
-     * @param v
+     * @param view
      */
     protected void postUnRepaint(final APageListItem view)
     {
@@ -1000,19 +995,13 @@ public class APageListView extends AdapterView<Adapter>
         {
             return;
         }
-        post(new Runnable()
-        {
-            public void run()
-            {
-                view.removeRepaintImageView();
-            }
-        });
+        post(view::removeRepaintImageView);
     }
     
 
     /**
      * 
-     * @param v
+     * @param view
      */
     public void postRepaint(final APageListItem view)
     {
@@ -1020,18 +1009,11 @@ public class APageListView extends AdapterView<Adapter>
         {
             return;
         }
-        post(new Runnable()
-        {
-            public void run()
-            {
-                view.addRepaintImageView(null);
-            }
-        });
+        post(() -> view.addRepaintImageView(null));
     }
     
     /**
-     * 
-     * @param i
+     *
      * @return
      */
     public APageListItem getCurrentPageView()
@@ -1054,7 +1036,7 @@ public class APageListView extends AdapterView<Adapter>
     
     /**
      * 
-     * @param i
+     * @param pageIndex
      * @return
      */
     private APageListItem createPageView(int pageIndex)

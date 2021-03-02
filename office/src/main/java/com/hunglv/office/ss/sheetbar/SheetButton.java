@@ -1,159 +1,134 @@
-/*
- * 文件名称:          SheetButton.java
- *  
- * 编译器:            android2.2
- * 时间:              下午6:06:50
- */
 package com.hunglv.office.ss.sheetbar;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-/**
- * sheet表名称按钮
- * <p>
- * <p>
- * Read版本:        Read V1.0
- * <p>
- * 作者:            ljj8494
- * <p>
- * 日期:            2011-12-6
- * <p>
- * 负责人:          ljj8494
- * <p>
- * 负责小组:         
- * <p>
- * <p>
- */
-public class SheetButton extends LinearLayout
-{
-    private static final int FONT_SIZE = 18; 
+public class SheetButton extends LinearLayout {
+    private static final int FONT_SIZE = 14;
     //
-    private static final int SHEET_BUTTON_MIN_WIDTH = 100;
- 
+    private static final int SHEET_BUTTON_MIN_WIDTH = 120;
+
     /**
-     * 
      * @param context
      */
-    public SheetButton(Context context, String sheetName, int sheetIndex, SheetbarResManager sheetbarResManager)
-    {
+    public SheetButton(Context context, String sheetName, int sheetIndex) {
         super(context);
+        this.context = context;
         setOrientation(HORIZONTAL);
         this.sheetIndex = sheetIndex;
-        this.sheetbarResManager = sheetbarResManager;
-        
+
         init(context, sheetName);
     }
-    
+
     /**
-     * 
+     *
      */
-    private void init(Context context, String sheetName)
-    {
-        //左边图标
+    private void init(Context context, String sheetName) {
+        //Left icon
         left = new View(context);
-        
-        left.setBackgroundDrawable(sheetbarResManager.getDrawable(SheetbarResConstant.RESID_SHEETBUTTON_NORMAL_LEFT));
         addView(left);
-        
+
         // 
         textView = new TextView(context);
-        textView.setBackgroundDrawable(sheetbarResManager.getDrawable(SheetbarResConstant.RESID_SHEETBUTTON_NORMAL_MIDDLE));
+        textView.setBackgroundColor(Color.parseColor("#F0F4F7"));
         textView.setText(sheetName);
         textView.setTextSize(FONT_SIZE);
         textView.setGravity(Gravity.CENTER);
-        textView.setTextColor(Color.BLACK);
-        int w = (int)textView.getPaint().measureText(sheetName);
+        textView.setTextColor(Color.parseColor("#000000"));
+        textView.setPadding(5, 0, 5, 0);
+
+        int w = correctWidth(sheetName);
         w = Math.max(w, SHEET_BUTTON_MIN_WIDTH);
-        addView(textView, new LayoutParams(w, LayoutParams.MATCH_PARENT));
-        
-        // 右边图标
+        LayoutParams params = new LayoutParams(w, LayoutParams.MATCH_PARENT);
+        params.setMargins(0, 1, 1, 0);
+        addView(textView, params);
+
+        // right icon
         right = new View(context);
-        right.setBackgroundDrawable(sheetbarResManager.getDrawable(SheetbarResConstant.RESID_SHEETBUTTON_NORMAL_RIGHT));
+        right.setBackgroundColor(Color.BLUE);
         addView(right);
     }
-    
+
+    private int correctWidth(String text) {
+        Rect bounds = new Rect();
+        textView.getPaint().getTextBounds(text, 0, text.length(), bounds);
+        return bounds.width() + 24;
+    }
+
     /**
-     * 
      *
      */
-    public boolean onTouchEvent(MotionEvent event)
-    {
+    public boolean onTouchEvent(MotionEvent event) {
         int action = event.getAction();
-        switch (action)
-        {
+        switch (action) {
             case MotionEvent.ACTION_DOWN:
             case MotionEvent.ACTION_MOVE:
-                if(!active)
-                {
-                    left.setBackgroundDrawable(sheetbarResManager.getDrawable(SheetbarResConstant.RESID_SHEETBUTTON_PUSH_LEFT));
-                    textView.setBackgroundDrawable(sheetbarResManager.getDrawable(SheetbarResConstant.RESID_SHEETBUTTON_PUSH_MIDDLE));
-                    right.setBackgroundDrawable(sheetbarResManager.getDrawable(SheetbarResConstant.RESID_SHEETBUTTON_PUSH_RIGHT));
-                }                
+//                if(!active)
+//                {
+//                    left.setBackground(sheetbarResManager.getDrawable(SheetbarResConstant.RESID_SHEETBUTTON_PUSH_LEFT));
+//                    textView.setBackground(sheetbarResManager.getDrawable(SheetbarResConstant.RESID_SHEETBUTTON_PUSH_MIDDLE));
+//                    right.setBackground(sheetbarResManager.getDrawable(SheetbarResConstant.RESID_SHEETBUTTON_PUSH_RIGHT));
+//                }
                 break;
 
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                if(!active)
-                {
-                    left.setBackgroundDrawable(sheetbarResManager.getDrawable(SheetbarResConstant.RESID_SHEETBUTTON_NORMAL_LEFT));
-                    textView.setBackgroundDrawable(sheetbarResManager.getDrawable(SheetbarResConstant.RESID_SHEETBUTTON_NORMAL_MIDDLE));
-                    right.setBackgroundDrawable(sheetbarResManager.getDrawable(SheetbarResConstant.RESID_SHEETBUTTON_NORMAL_RIGHT));
-                }                
+//                if(!active)
+//                {
+//                    left.setBackground(sheetbarResManager.getDrawable(SheetbarResConstant.RESID_SHEETBUTTON_NORMAL_LEFT));
+//                    textView.setBackground(sheetbarResManager.getDrawable(SheetbarResConstant.RESID_SHEETBUTTON_NORMAL_MIDDLE));
+//                    right.setBackground(sheetbarResManager.getDrawable(SheetbarResConstant.RESID_SHEETBUTTON_NORMAL_RIGHT));
+//                }
                 break;
         }
         return super.onTouchEvent(event);
     }
-    
+
     /**
      * 选中或取消选中用到
      */
-    public void changeFocus(boolean gainFocus)
-    {
+    public void changeFocus(boolean gainFocus) {
         active = gainFocus;
-        
-        left.setBackgroundDrawable(gainFocus ? sheetbarResManager.getDrawable(SheetbarResConstant.RESID_SHEETBUTTON_FOCUS_LEFT) :
-            sheetbarResManager.getDrawable(SheetbarResConstant.RESID_SHEETBUTTON_NORMAL_LEFT));
-        textView.setBackgroundDrawable(gainFocus ? sheetbarResManager.getDrawable(SheetbarResConstant.RESID_SHEETBUTTON_FOCUS_MIDDLE) :
-            sheetbarResManager.getDrawable(SheetbarResConstant.RESID_SHEETBUTTON_NORMAL_MIDDLE));
-        right.setBackgroundDrawable(gainFocus ? sheetbarResManager.getDrawable(SheetbarResConstant.RESID_SHEETBUTTON_FOCUS_RIGHT) :
-            sheetbarResManager.getDrawable(SheetbarResConstant.RESID_SHEETBUTTON_NORMAL_RIGHT));
+        textView.setBackgroundColor(Color.parseColor(gainFocus ? "#FFFFFF" : "#F0F4F7"));
+        textView.setTextColor(Color.parseColor(gainFocus ? "#297841" : "#000000"));
+        //        left.setBackground(gainFocus ? sheetbarResManager.getDrawable(SheetbarResConstant.RESID_SHEETBUTTON_FOCUS_LEFT) :
+//            sheetbarResManager.getDrawable(SheetbarResConstant.RESID_SHEETBUTTON_NORMAL_LEFT));
+//        textView.setBackground(gainFocus ? sheetbarResManager.getDrawable(SheetbarResConstant.RESID_SHEETBUTTON_FOCUS_MIDDLE) :
+//            sheetbarResManager.getDrawable(SheetbarResConstant.RESID_SHEETBUTTON_NORMAL_MIDDLE));
+//        right.setBackground(gainFocus ? sheetbarResManager.getDrawable(SheetbarResConstant.RESID_SHEETBUTTON_FOCUS_RIGHT) :
+//            sheetbarResManager.getDrawable(SheetbarResConstant.RESID_SHEETBUTTON_NORMAL_RIGHT));
     }
-    
+
     /**
-     * 
+     *
      */
-    public int getSheetIndex()
-    {
+    public int getSheetIndex() {
         return this.sheetIndex;
     }
-    
+
     /**
-     * 
+     *
      */
-    public void dispose()
-    {
-        sheetbarResManager = null;
-        
+    public void dispose() {
         left = null;
         textView = null;
         right = null;
     }
-    
-    private SheetbarResManager sheetbarResManager;
+
     //
-    private int sheetIndex;;
-    // 左边图标
+    private int sheetIndex;
+    // Left icon
     private View left;
-    // 中间文本
+    // Text center
     private TextView textView;
-    // 右边图标
+    // Right icon
     private View right;
-    
+    private Context context;
     private boolean active;
 }

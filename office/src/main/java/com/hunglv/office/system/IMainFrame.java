@@ -1,9 +1,3 @@
-/*
- * 文件名称:          IActivity.java
- *  
- * 编译器:            android2.2
- * 时间:              下午5:24:10
- */
 package com.hunglv.office.system;
 
 import java.io.File;
@@ -13,52 +7,36 @@ import android.app.Activity;
 import android.view.MotionEvent;
 import android.view.View;
 
-/**
- * activity interface
- * <p>
- * <p>
- * Read版本:        Read V1.0
- * <p>
- * 作者:            ljj8494
- * <p>
- * 日期:            2012-5-15
- * <p>
- * 负责人:          ljj8494
- * <p>
- * 负责小组:         
- * <p>
- * <p>
- */
 public interface IMainFrame
 {
     // onTouch
-    public final static byte ON_TOUCH = 0;
+    byte ON_TOUCH = 0;
     // onDown
-    public final static byte ON_DOWN = 1;
+    byte ON_DOWN = 1;
     // onShowPresso
-    public final static byte ON_SHOW_PRESS = 2;
+    byte ON_SHOW_PRESS = 2;
     // onSingleTapUp
-    public final static byte ON_SINGLE_TAP_UP = 3;
+    byte ON_SINGLE_TAP_UP = 3;
     // onScroll
-    public final static byte ON_SCROLL = 4;
+    byte ON_SCROLL = 4;
     // onLongPress
-    public final static byte ON_LONG_PRESS = 5;
+    byte ON_LONG_PRESS = 5;
     // onFling
-    public final static byte ON_FLING = 6;
+    byte ON_FLING = 6;
     // onSingleTapConfirmed
-    public final static byte ON_SINGLE_TAP_CONFIRMED = 7;
+    byte ON_SINGLE_TAP_CONFIRMED = 7;
     // onDoubleTap
-    public final static byte ON_DOUBLE_TAP = 8;
+    byte ON_DOUBLE_TAP = 8;
     // onDoubleTapEvent
-    public final static byte ON_DOUBLE_TAP_EVENT = 9;
+    byte ON_DOUBLE_TAP_EVENT = 9;
     // onClick
-    public final static byte ON_CLICK = 10;
+    byte ON_CLICK = 10;
 
     /**
      * get activity instance
      * @return activity instance
      */
-    public Activity getActivity();
+    Activity getActivity();
     
     /**
      * do action 
@@ -69,48 +47,48 @@ public interface IMainFrame
      * 
      * @return  True if the listener has consumed the event, false otherwise. 
      */
-    public boolean doActionEvent(int actionID, Object obj);
+    boolean doActionEvent(int actionID, Object obj);
     
     /**
      * reader file finish call this method
      */
-    public void openFileFinish();
+    void openFileFinish();
     
     /**
      * update tool bar status
-     */    
-    public void updateToolsbarStatus();
+     */
+    void updateToolbarStatus();
     
     /**
      * set the find back button and find forward button state
      * 
      * @param state
      */
-    public void setFindBackForwardState(boolean state);
+    void setFindBackForwardState(boolean state);
     
     /**
      * get bottom  bar height
      * @return bottom bar height
      */
-    public int getBottomBarHeight();
+    int getBottomBarHeight();
     
     /**
      * get top bar height
      * @return top bar height
      */
-    public int getTopBarHeight();
+    int getTopBarHeight();
     
     /**
      * get application name;
      * @return application name
      */
-    public String getAppName();
+    String getAppName();
     
     /**
      * 
      * @return
      */
-    public File getTemporaryDirectory();
+    File getTemporaryDirectory();
     
     /**
      * event method, office engine dispatch 
@@ -125,7 +103,7 @@ public interface IMainFrame
      * @param       yValue        eventNethodType is ON_SCROLL, this is value distanceY
      *                             eventNethodType is ON_FLING, this is value velocityY
      *                             eventNethodType is other type, this is value -1  
-     * @param       eventNethodType  event method      
+     *     eventNethodType  event method
      *              @see IMainFrame#ON_CLICK
      *              @see IMainFrame#ON_DOUBLE_TAP
      *              @see IMainFrame#ON_DOUBLE_TAP_EVENT
@@ -138,7 +116,7 @@ public interface IMainFrame
      *              @see IMainFrame#ON_SINGLE_TAP_UP
      *              @see IMainFrame#ON_TOUCH
      */
-    public boolean onEventMethod(View v, MotionEvent e1, MotionEvent e2, float xValue, float yValue, byte eventMethodType);
+    boolean onEventMethod(View v, MotionEvent e1, MotionEvent e2, float xValue, float yValue, byte eventMethodType);
     
     /**
      * is support draw page number
@@ -146,50 +124,50 @@ public interface IMainFrame
      *           false don’t draw page number
      */
 
-    public boolean isDrawPageNumber();
+    boolean isDrawPageNumber();
     
     /**
      * true: show message when zooming
      * false: not show message when zooming
      * @return
      */
-    public boolean isShowZoomingMsg();
+    boolean isShowZoomingMsg();
     
     /**
      * true: pop up dialog when throw err
      * false: not pop up dialog when throw err
      * @return
      */
-    public boolean isPopUpErrorDlg();
+    boolean isPopUpErrorDlg();
     
     /**
      * show password dialog when parse file with password
      * @return
      */
-    public boolean isShowPasswordDlg(); 
+    boolean isShowPasswordDlg();
     
     /**
      * show progress bar or not when parsing document
      * @return
      */
-    public boolean isShowProgressBar();
+    boolean isShowProgressBar();
     
     /**
      * 
      */
-    public boolean isShowFindDlg();
+    boolean isShowFindDlg();
     
     /**
      * show txt encode dialog when parse txt file
      * @return
      */
-    public boolean isShowTXTEncodeDlg();
+    boolean isShowTXTEncodeDlg();
     
     /**
      * get txt default encode when not showing txt encode dialog
      * @return null if showing txt encode dialog
      */
-    public String getTXTDefaultEncode();
+    String getTXTDefaultEncode();
     
     /**
      * is support zoom in / zoom out
@@ -198,7 +176,7 @@ public interface IMainFrame
      *           false don’t touch zoom
      */
 
-    public boolean isTouchZoom();
+    boolean isTouchZoom();
     
     /**
      * normal view, changed after zoom bend, you need to re-layout
@@ -206,7 +184,7 @@ public interface IMainFrame
      *  @return  true   re-layout
      *            false  don't re-layout   
      */
-    public boolean isZoomAfterLayoutForWord();
+    boolean isZoomAfterLayoutForWord();
     
     /**
      * Word application default view (Normal or Page)
@@ -215,61 +193,61 @@ public interface IMainFrame
      *          1，normal view;
      *           
      */
-    public byte getWordDefaultView();
+    byte getWordDefaultView();
     
     /**
      * get Internationalization resource
      * 
      * @param resName Internationalization resource name
      */
-    public String getLocalString(String resName);
+    String getLocalString(String resName);
     
     /**
      * callback this method after zoom change
      */
-    public void changeZoom();
+    void changeZoom();
     
     /**
      * 
      */
-    public void changePage();
+    void changePage();
     
     /**
      * 
      */
-    public void completeLayout();
+    void completeLayout();
     
     /**
      * when engine error occurred callback this method
      */
-    public void error(int errorCode);
+    void error(int errorCode);
     
     /**
      * full screen, not show top tool bar
      */
-    public void fullScreen(boolean fullscreen);
+    void fullScreen(boolean fullscreen);
     
     /**
      * 
      * @param visible
      */
-    public void showProgressBar(boolean visible);
+    void showProgressBar(boolean visible);
     
     /**
      * 
      * @param viewList
      */
-    public void updateViewImages(List<Integer> viewList);   
+    void updateViewImages(List<Integer> viewList);
 
     
     /**
      *  set change page flag, Only when effectively the PageSize greater than ViewSize.
      *  (for PPT, word print mode, PDF)
      *  
-     *  @param b    = true, change page
+     *   b    = true, change page
      *              = false, don't change page
      */
-    public boolean isChangePage();
+    boolean isChangePage();
     
     /**
      * when need destroy office engine instance callback this method
@@ -280,37 +258,37 @@ public interface IMainFrame
      * 
      * @param saveLog
      */
-    public void setWriteLog(boolean saveLog);
+    void setWriteLog(boolean saveLog);
     
     /**
      * 
      * @return
      */
-    public boolean isWriteLog();
+    boolean isWriteLog();
     
     /**
      * 
      * @param isThumbnail
      */
-    public void setThumbnail(boolean isThumbnail);
+    void setThumbnail(boolean isThumbnail);
     
     /**
      * 
      * @return
      */
-    public boolean isThumbnail();
+    boolean isThumbnail();
     
     /**
      * get view backgrouond
      * @return
      */
-    public Object getViewBackground();
+    Object getViewBackground();
     
     /**
      * set flag whether fitzoom can be larger than 100% but smaller than the max zoom
      * @param ignoreOriginalSize
      */
-    public void setIgnoreOriginalSize(boolean ignoreOriginalSize);
+    void setIgnoreOriginalSize(boolean ignoreOriginalSize);
     
     /**
      * 
@@ -318,16 +296,16 @@ public interface IMainFrame
      * true fitzoom may be larger than 100% but smaller than the max zoom
      * false fitzoom can not larger than 100%
      */
-    public boolean isIgnoreOriginalSize();
+    boolean isIgnoreOriginalSize();
     
     /**
      * page list view moving position
-     * @param position horizontal or vertical
+     *  position horizontal or vertical
      */
-    public byte getPageListViewMovingPosition();
+    byte getPageListViewMovingPosition();
     
     /**
      * 
      */
-    public void dispose();
+    void dispose();
 }

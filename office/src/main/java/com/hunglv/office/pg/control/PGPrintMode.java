@@ -130,12 +130,12 @@ public class PGPrintMode extends FrameLayout implements IPageListViewListener
      * 
      *
      */
-    public void setBackgroundDrawable(Drawable d) 
+    public void setBackground(Drawable d)
     {
-       super.setBackgroundDrawable(d);
+       super.setBackground(d);
        if (listView != null)
        {
-           listView.setBackgroundDrawable(d);
+           listView.setBackground(d);
        }
     }
     
@@ -273,8 +273,6 @@ public class PGPrintMode extends FrameLayout implements IPageListViewListener
     }
     
     /**
-     * @param x 为100%的值
-     * @param y 为100%的值
      * /
     public long viewToModel(int x, int y, boolean isBack)
     {
@@ -486,7 +484,7 @@ public class PGPrintMode extends FrameLayout implements IPageListViewListener
     
     /**
      * page list view moving position
-     * @param position horizontal or vertical
+     *  position horizontal or vertical
      */
     public byte getPageListViewMovingPosition()
     {
@@ -517,7 +515,7 @@ public class PGPrintMode extends FrameLayout implements IPageListViewListener
      * @param       e2            MotionEvent instance
      * @param       velocityX     x axis velocity
      * @param       velocityY     y axis velocity  
-     * @param       eventNethodType  event method      
+     *       eventNethodType  event method
      *              @see IMainFrame#ON_CLICK
      *              @see IMainFrame#ON_DOUBLE_TAP
      *              @see IMainFrame#ON_DOUBLE_TAP_EVENT
@@ -582,7 +580,7 @@ public class PGPrintMode extends FrameLayout implements IPageListViewListener
      * 
      *
      */
-    public void updateStutus(Object obj)
+    public void updateStatus(Object obj)
     {
        control.actionEvent(EventConstant.SYS_UPDATE_TOOLSBAR_BUTTON_STATUS, obj);
     }
@@ -628,11 +626,11 @@ public class PGPrintMode extends FrameLayout implements IPageListViewListener
     }
     
     /**
-     * @param isDrawPictrue The isDrawPictrue to set.
+     * @param isDrawPicture The isDrawPicture to set.
      */
-    public void setDrawPictrue(boolean isDrawPictrue)
+    public void setDrawPicture(boolean isDrawPicture)
     {
-        PictureKit.instance().setDrawPictrue(isDrawPictrue);
+        PictureKit.instance().setDrawPictrue(isDrawPicture);
     }
     
     /**
@@ -655,7 +653,6 @@ public class PGPrintMode extends FrameLayout implements IPageListViewListener
     /**
      * 绘制页信息
      * @param canvas
-     * @param zoom
      */
     private void drawPageNubmer(Canvas canvas)
     {
@@ -694,7 +691,7 @@ public class PGPrintMode extends FrameLayout implements IPageListViewListener
      *  set change page flag, Only when effectively the PageSize greater than ViewSize.
      *  (for PPT, word print mode, PDF)
      *  
-     *  @param b    = true, change page
+     *   b    = true, change page
      *              = false, don't change page
      */
     public boolean isChangePage()

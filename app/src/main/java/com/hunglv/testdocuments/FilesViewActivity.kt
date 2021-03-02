@@ -16,15 +16,14 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.hunglv.office.common.IOfficeToPicture
 import com.hunglv.office.common.IOfficeToPicture.VIEW_CHANGE_END
-import com.hunglv.office.constant.EventConstant
 import com.hunglv.office.constant.EventConstant.*
 import com.hunglv.office.constant.MainConstant.*
 import com.hunglv.office.constant.wp.WPViewConstant
 import com.hunglv.office.java.awt.Color
 import com.hunglv.office.macro.DialogListener
-import com.hunglv.office.officereader.beans.AToolsbar
 import com.hunglv.office.res.ResKit
 import com.hunglv.office.ss.sheetbar.SheetBar
 import com.hunglv.office.system.IControl
@@ -78,10 +77,6 @@ class FilesViewActivity : AppCompatActivity(), IMainFrame {
             this.filePath = intent.getStringExtra("path")
             this.fileName = intent.getStringExtra("name")
             this.isFromAppActivity = intent.getBooleanExtra("fromAppActivity", false)
-            this.appFrame?.setBackgroundColor(
-                (intent.getStringExtra("fileType")?.toInt() ?: R.color.gray)
-            )
-            Log.d("Hunglv", "FilesViewActivity - onCreate: $filePath")
             binding.layoutToolbar.toolBarTitle.text = fileName
         }
 
@@ -210,7 +205,7 @@ class FilesViewActivity : AppCompatActivity(), IMainFrame {
             }
         }
         fullScreen(false)
-        this.control?.actionEvent(EventConstant.PG_SLIDESHOW_END, null)
+        this.control?.actionEvent(PG_SLIDESHOW_END, null)
     }
 
     override fun onDestroy() {
@@ -386,16 +381,16 @@ class FilesViewActivity : AppCompatActivity(), IMainFrame {
         binding.progressBar.visibility = if (visible) View.VISIBLE else View.GONE
     }
 
-    override fun updateToolsbarStatus() {
+    override fun updateToolbarStatus() {
         if (appFrame == null || isDispose) {
             return
         }
         val count = appFrame!!.childCount
         for (i in 0 until count) {
-            val view = appFrame!!.getChildAt(i)
-            if (view is AToolsbar) {
-                view.updateStatus()
-            }
+            /*val view =*/ appFrame!!.getChildAt(i)
+//            if (view is AToolsbar) {
+//                view.updateStatus()
+//            }
         }
     }
 
@@ -416,7 +411,7 @@ class FilesViewActivity : AppCompatActivity(), IMainFrame {
             onBackPressed()
         } else if (actionID != SYS_HELP_ID) {
             if (actionID == SYS_UPDATE_TOOLSBAR_BUTTON_STATUS) {
-                updateToolsbarStatus()
+                updateToolbarStatus()
             } else if (actionID == SYS_RESET_TITLE_ID) {
                 title = obj as String
             } else if (actionID != FILE_MARK_STAR_ID) {
@@ -478,7 +473,7 @@ class FilesViewActivity : AppCompatActivity(), IMainFrame {
 
     override fun openFileFinish() {
         gapView = View(applicationContext)
-        gapView!!.setBackgroundResource(R.color.black)
+        gapView!!.setBackgroundColor(ContextCompat.getColor(this,R.color.gray))
         appFrame?.addView(
             gapView,
             LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 1)
@@ -492,8 +487,8 @@ class FilesViewActivity : AppCompatActivity(), IMainFrame {
                     LinearLayout.LayoutParams.MATCH_PARENT
                 )
             )
-//            appFrame?.invalidate()
         }
+        Log.d("Hunglv", "FilesViewActivity - openFileFinish: ${appFrame?.childCount}")
     }
 
     override fun getBottomBarHeight(): Int {
@@ -518,7 +513,7 @@ class FilesViewActivity : AppCompatActivity(), IMainFrame {
 
     override fun isWriteLog(): Boolean {
 //        return this.writeLog
-        return false
+        return true
     }
 
     override fun setThumbnail(isThumbnail: Boolean) {

@@ -43,7 +43,7 @@ public class WPEventManage extends AEventManage
 {    
     /**
      * 
-     * @param spreadsheet
+     * @param control
      */
     public WPEventManage(Word word, IControl control)
     {
@@ -337,7 +337,7 @@ public class WPEventManage extends AEventManage
         }
         else
         {
-            if (!PictureKit.instance().isDrawPictrue())
+            if (!PictureKit.instance().isDrawPicture())
             {
                 PictureKit.instance().setDrawPictrue(true);
                 word.postInvalidate();

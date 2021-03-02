@@ -11,6 +11,7 @@ import com.hunglv.office.common.PaintKit;
 import com.hunglv.office.constant.EventConstant;
 import com.hunglv.office.system.IControl;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -74,8 +75,9 @@ public class AImageButton extends View implements OnGestureListener, OnClickList
     /**
      * 
      */
+    @SuppressLint("MissingSuperCall")
     protected void onFocusChanged(boolean gainFocus,
-        int direction, Rect previouslyFocusedRect)
+                                  int direction, Rect previouslyFocusedRect)
     {
         int id = gainFocus ? focusBgResID : normalBgResID;
         if (id != -1)
@@ -127,7 +129,7 @@ public class AImageButton extends View implements OnGestureListener, OnClickList
             case MotionEvent.ACTION_CANCEL:
                 if (normalBgResID == -1)
                 {
-                    setBackgroundDrawable(null);
+                    setBackground(null);
                 }
                 else
                 {
@@ -151,11 +153,11 @@ public class AImageButton extends View implements OnGestureListener, OnClickList
         }
         if (isEnabled())
         {
-            canvas.drawBitmap(bitmap, (getWidth() - bitmap.getWidth()) / 2, (getHeight() - bitmap.getHeight()) / 2, PaintKit.instance().getPaint());
+            canvas.drawBitmap(bitmap, (getWidth() - bitmap.getWidth()) / 2f, (getHeight() - bitmap.getHeight()) / 2f, PaintKit.instance().getPaint());
         }
         else if (bitmapDisable != null)
         {
-            canvas.drawBitmap(bitmapDisable, (getWidth() - bitmapDisable.getWidth()) / 2, (getHeight() - bitmapDisable.getHeight()) / 2, PaintKit.instance().getPaint());
+            canvas.drawBitmap(bitmapDisable, (getWidth() - bitmapDisable.getWidth()) / 2f, (getHeight() - bitmapDisable.getHeight()) / 2f, PaintKit.instance().getPaint());
         }
     }
     /**
@@ -224,7 +226,7 @@ public class AImageButton extends View implements OnGestureListener, OnClickList
     /**
      * @return Returns the tooltip.
      */
-    public String getToolstip()
+    public String getTooltip()
     {
         return toolstip;
     }

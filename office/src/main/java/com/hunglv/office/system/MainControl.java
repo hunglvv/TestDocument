@@ -38,22 +38,6 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Toast;
 
-/**
- * application control
- * <p>
- * <p>
- * Read版本:        Read V1.0
- * <p>
- * 作者:            ljj8494
- * <p>
- * 日期:            2012-5-14
- * <p>
- * 负责人:          ljj8494
- * <p>
- * 负责小组:         
- * <p>
- * <p>
- */
 public class MainControl extends AbstractControl
 {
 
@@ -306,12 +290,12 @@ public class MainControl extends AbstractControl
                 {
                     if (!hassPassword)
                     {
-                        frame.updateToolsbarStatus();
+                        frame.updateToolbarStatus();
                     }
                 }
                 else
                 {
-                    frame.updateToolsbarStatus();
+                    frame.updateToolbarStatus();
                 }
                 //
                 getView().postInvalidate();
@@ -494,7 +478,7 @@ public class MainControl extends AbstractControl
                 
             case EventConstant.APP_CONTENT_SELECTED:  //selected interesting content
                 appControl.actionEvent(actionID, obj);
-                frame.updateToolsbarStatus();
+                frame.updateToolbarStatus();
                 break;
                 
             case EventConstant.APP_ABORTREADING:
@@ -588,7 +572,7 @@ public class MainControl extends AbstractControl
     			|| actionID == EventConstant.PG_SLIDE_TO_IMAGE
     			|| actionID == EventConstant.PG_SLIDESHOW_SLIDESHOWTOIMAGE)
     	{
-    		boolean b = PictureKit.instance().isDrawPictrue();
+    		boolean b = PictureKit.instance().isDrawPicture();
     		boolean isThumbnail = frame.isThumbnail();
             PictureKit.instance().setDrawPictrue(true);            
             if(actionID == EventConstant.APP_THUMBNAIL_ID)
@@ -818,11 +802,11 @@ public class MainControl extends AbstractControl
     private boolean isDispose;
     //
     private boolean isCancel;
-    // 自动化测试
+    // Auto test
     private boolean isAutoTest;    
     //
     private byte applicationType = -1;
-    // 文件路径
+    //
     private String filePath;
     //
     private IMainFrame frame;

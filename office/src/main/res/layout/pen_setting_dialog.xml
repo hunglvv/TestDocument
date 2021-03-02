@@ -19,7 +19,7 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <com.wxiwei.office.system.dialog.ColorPickerView
+    <com.hunglv.office.system.dialog.ColorPickerView
         android:id="@+id/colorPickerView"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"

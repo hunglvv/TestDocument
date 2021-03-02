@@ -22,6 +22,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Environment;
+import android.util.Log;
 
 /**
  * error message
@@ -139,6 +140,7 @@ public class ErrorUtil
             	if (sysKit.getControl().getMainFrame().isWriteLog() 
                         && !(ex instanceof OutOfMemoryError))
                     {
+                        Log.d("ErrorUtil", "writerLog: "+ex);
                         FileWriter info = new FileWriter(logFile, true);
                         PrintWriter printWriter = new PrintWriter(info, true);
                         printWriter.println();

@@ -96,7 +96,6 @@ public class SlideDrawKit
      * @param editor
      * @param slide
      * @param zoom
-     * @param isPlaying
      */
     public void drawSlide(Canvas canvas, PGModel pgModel, PGEditor editor, PGSlide slide, float zoom, Map<Integer, Map<Integer, IAnimation>> shapeVisible)
     {
@@ -366,7 +365,6 @@ public class SlideDrawKit
     /**
      * 
      * @param canvas
-     * @param picture
      * @param zoom
      */
     private void drawPicture(Canvas canvas, PGEditor editor, int slideNo, PictureShape pictureShape, float zoom)
@@ -624,7 +622,7 @@ public class SlideDrawKit
                 return null;
             }
     		
-    		boolean b = PictureKit.instance().isDrawPictrue();
+    		boolean b = PictureKit.instance().isDrawPicture();
             PictureKit.instance().setDrawPictrue(true);
             
             Dimension d = pgModel.getPageSize();
@@ -665,7 +663,7 @@ public class SlideDrawKit
             {
                 return null;
             }
-            boolean b = PictureKit.instance().isDrawPictrue();
+            boolean b = PictureKit.instance().isDrawPicture();
             PictureKit.instance().setDrawPictrue(true);
             //
             float paintZoom = Math.min(desWidth / (float)srcWidth, desHeight / (float)srcHeight);        
@@ -722,7 +720,7 @@ public class SlideDrawKit
             {
                 return null;
             }
-    		boolean b = PictureKit.instance().isDrawPictrue();
+    		boolean b = PictureKit.instance().isDrawPicture();
             PictureKit.instance().setDrawPictrue(true);
             
             Dimension d = pgModel.getPageSize();

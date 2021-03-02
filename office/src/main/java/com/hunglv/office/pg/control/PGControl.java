@@ -24,16 +24,15 @@ import com.hunglv.office.system.IControl;
 import com.hunglv.office.system.IFind;
 import com.hunglv.office.system.IMainFrame;
 import com.hunglv.office.system.SysKit;
-import com.hunglv.office.system.beans.CalloutView.CalloutView;
 
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.text.ClipboardManager;
 import android.view.View;
 
 /**
@@ -159,7 +158,7 @@ public class PGControl extends AbstractControl
                         {
                             if (getMainFrame() != null)
                             {
-                                getMainFrame().updateToolsbarStatus();
+                                getMainFrame().updateToolbarStatus();
                             }
                         }
                     }
@@ -229,8 +228,9 @@ public class PGControl extends AbstractControl
                 break;
                 
             case EventConstant.FILE_COPY_ID:                      //copy
-                ClipboardManager clip = (ClipboardManager)getMainFrame().getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-                clip.setText(pgView.getSelectedText());
+                android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getMainFrame().getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("Text copied!", pgView.getSelectedText());
+                clipboard.setPrimaryClip(clip);
                 break;
                 
             case EventConstant.APP_HYPERLINK: //hyperlink
